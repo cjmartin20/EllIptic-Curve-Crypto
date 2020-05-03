@@ -1,4 +1,0 @@
-outFile = open('OnTheWire.txt', 'w')
-outFile.write('1234\n')
-outFile.write('Alice, this is my key\n')
-outFile.close()
