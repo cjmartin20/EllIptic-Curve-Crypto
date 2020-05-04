@@ -1,2 +1,1 @@
-4321
-Bob, this is my key
+1.0
