@@ -6,7 +6,7 @@
 import time
 import os
 import threading
-from ECC import ( Fp )
+from ecc import ( Fp )
 
 s = threading.Semaphore(1)
 standardized_point = ( Fp(39984455814760748732201855760812543180582291579854007269875196977732502578790), Fp(4/5) )

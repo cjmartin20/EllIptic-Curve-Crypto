@@ -1,4 +1,4 @@
-# in file ECC.py
+# in file ecc.py
 # Class to implement Elliptic Curve and Clock Cryptography
 import math
 #p = 2 ** 255 - 19 #for use of curve25519 (type of Montgomery, Diffie_Hellman.py) 
@@ -96,17 +96,17 @@ class Fp :
             z2,z3 = Fp.cswap(z2,z3,bit)
         return x2*Fp.exp(z2,(p-2))
 #Testing Montgomer, can't 
-standardized_point = (Fp(1000), Fp(2))
-Bsk = 123
-Bpk = Fp.scalarMult_Clock( Bsk, standardized_point )
-print( '(Bob) Sending Public key ...\n', Bpk, '...' )
-Ask = 333
-Apk = Fp.scalarMult_Clock( Ask, standardized_point )
-alice_secret = Fp.scalarMult_Clock( Ask, Bpk )
-print( '(Alice) The shared secret is ...\n', alice_secret )
-print( '(Alice) Sending Public key ...\n', Apk )
-bob_secret = Fp.scalarMult_Clock( Bsk, Apk )
-print( '(Bob) The shared secret is ...\n', bob_secret )
+#standardized_point = (Fp(1000), Fp(2))
+#Bsk = 123
+#Bpk = Fp.scalarMult_Clock( Bsk, standardized_point )
+#print( '(Bob) Sending Public key ...\n', Bpk, '...' )
+#Ask = 333
+#Apk = Fp.scalarMult_Clock( Ask, standardized_point )
+#alice_secret = Fp.scalarMult_Clock( Ask, Bpk )
+#print( '(Alice) The shared secret is ...\n', alice_secret )
+#print( '(Alice) Sending Public key ...\n', Apk )
+#bob_secret = Fp.scalarMult_Clock( Bsk, Apk )
+#print( '(Bob) The shared secret is ...\n', bob_secret )
 '''
 x = 20000001
 y = 20000000
