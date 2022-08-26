@@ -39,8 +39,8 @@ class Fp :
             lambda a,b: Fp( a.int // b.int )
     __truediv__ = \
             lambda a,b: Fp( a.int / b.int )
-#Overload operators to hangle Cartesian Coordinates
-#Add Cartesian Coordinates together
+    #Overload operators to hangle Cartesian Coordinates
+    #Add Cartesian Coordinates together
     def clockadd( P1, P2 ) :
         #x^2 + y^2 = 1
         x1, y1 = P1
@@ -48,7 +48,7 @@ class Fp :
         x3 = x1 * y2 + y1 * x2
         y3 = y1 * y2 - x1 * x2
         return x3, y3
-#Adds points of an Edwards curve
+    #Adds points of an Edwards curve
     def edwardsadd(P1,P2) :
         #x^2 + y^2 = 1 + d * x^2 * y^2
         d = 121655 / 121666 #d cannot be a square
@@ -58,13 +58,15 @@ class Fp :
         x3 = (x1*y2+y1*x2)/(Fp.add( 1, Fp.mul( d, (x1*x2*y1*y2))))
         y3 = (y1*y2-x1*x2)/(Fp.sub( 1, Fp.mul( d, (x1*x2*y1*y2))))
         return x3,y3
-#Multplies a Cartesian Coordinate by a scaler
+    #Recursive function to "multiply" a Cartesian Coordinate by a scaler
     def scalarMult_Clock ( n, P ) :
         #x^2 + y^2 = 1
         if n == 0 : return ( Fp( 0 ), Fp( 1 ) )
         if n == 1 : return P
+        #it is faster break n into two parts, multiply, then add the parts together
         Q = Fp.scalarMult_Clock( n // 2, P )
         Q = Fp.clockadd( Q, Q )
+        #if n was odd, you can't forget about that leftover point
         if n % 2 : Q = Fp.clockadd( P, Q )
         return Q
     def scalarMult_Edwards ( n, P ) :
