@@ -1,5 +1,6 @@
 # in file ecc.py
 # Class to implement Elliptic Curve and Clock Cryptography
+
 import math
 #p = 2 ** 255 - 19 #for use of curve25519 (type of Montgomery, Diffie_Hellman.py) 
 #maxnbits = 32 #for Montgomery
@@ -41,7 +42,7 @@ class Fp :
             lambda a,b: Fp( a.int / b.int )
     #Overload operators to hangle Cartesian Coordinates
     #Add Cartesian Coordinates together
-    def clockadd( P1, P2 ) :
+    def clock_add( P1, P2 ) :
         #x^2 + y^2 = 1
         x1, y1 = P1
         x2, y2 = P2
@@ -51,7 +52,7 @@ class Fp :
     #Adds points of an Edwards curve
     def edwardsadd(P1,P2) :
         #x^2 + y^2 = 1 + d * x^2 * y^2
-        d = 121655 / 121666 #d cannot be a square
+        d = 121655 #non-square d, in the finite field Fp
         #p needs to be large prime number
         x1,y1 = P1
         x2,y2 = P2
@@ -59,17 +60,17 @@ class Fp :
         y3 = (y1*y2-x1*x2)/(Fp.sub( 1, Fp.mul( d, (x1*x2*y1*y2))))
         return x3,y3
     #Recursive function to "multiply" a Cartesian Coordinate by a scaler
-    def scalarMult_Clock ( n, P ) :
+    def clock_scalar_multiply ( n, P ) :
         #x^2 + y^2 = 1
         if n == 0 : return ( Fp( 0 ), Fp( 1 ) )
         if n == 1 : return P
         #it is faster break n into two parts, multiply, then add the parts together
-        Q = Fp.scalarMult_Clock( n // 2, P )
-        Q = Fp.clockadd( Q, Q )
+        Q = Fp.clock_scalar_multiply( n // 2, P )
+        Q = Fp.clock_add( Q, Q )
         #if n was odd, you can't forget about that leftover point
-        if n % 2 : Q = Fp.clockadd( P, Q )
+        if n % 2 : Q = Fp.clock_add( P, Q )
         return Q
-    def scalarMult_Edwards ( n, P ) :
+    def edwards_scalar_multiply ( n, P ) :
         #x^2 + y^2 = 1 + d * x^2 * y^2
         if n == 0 : return ( Fp( 0 ), Fp( 1 ) )
         if n == 1 : return P
@@ -100,14 +101,14 @@ class Fp :
 #Testing Montgomer, can't 
 #standardized_point = (Fp(1000), Fp(2))
 #Bsk = 123
-#Bpk = Fp.scalarMult_Clock( Bsk, standardized_point )
+#Bpk = Fp.clock_scalar_multiply( Bsk, standardized_point )
 #print( '(Bob) Sending Public key ...\n', Bpk, '...' )
 #Ask = 333
-#Apk = Fp.scalarMult_Clock( Ask, standardized_point )
-#alice_secret = Fp.scalarMult_Clock( Ask, Bpk )
+#Apk = Fp.clock_scalar_multiply( Ask, standardized_point )
+#alice_secret = Fp.clock_scalar_multiply( Ask, Bpk )
 #print( '(Alice) The shared secret is ...\n', alice_secret )
 #print( '(Alice) Sending Public key ...\n', Apk )
-#bob_secret = Fp.scalarMult_Clock( Bsk, Apk )
+#bob_secret = Fp.clock_scalar_multiply( Bsk, Apk )
 #print( '(Bob) The shared secret is ...\n', bob_secret )
 '''
 x = 20000001
