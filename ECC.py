@@ -49,16 +49,6 @@ class Fp :
         x3 = x1 * y2 + y1 * x2
         y3 = y1 * y2 - x1 * x2
         return x3, y3
-    #Adds points of an Edwards curve
-    def edwardsadd(P1,P2) :
-        #x^2 + y^2 = 1 + d * x^2 * y^2
-        d = 121655 #non-square d, in the finite field Fp
-        #p needs to be large prime number
-        x1,y1 = P1
-        x2,y2 = P2
-        x3 = (x1*y2+y1*x2)/(Fp.add( 1, Fp.mul( d, (x1*x2*y1*y2))))
-        y3 = (y1*y2-x1*x2)/(Fp.sub( 1, Fp.mul( d, (x1*x2*y1*y2))))
-        return x3,y3
     #Recursive function to "multiply" a Cartesian Coordinate by a scaler
     def clock_scalar_multiply ( n, P ) :
         #x^2 + y^2 = 1
@@ -70,6 +60,16 @@ class Fp :
         #if n was odd, you can't forget about that leftover point
         if n % 2 : Q = Fp.clock_add( P, Q )
         return Q
+    #Adds points of an Edwards curve
+    def edwardsadd(P1,P2) :
+        #x^2 + y^2 = 1 + d * x^2 * y^2
+        d = 121655 #non-square d, in the finite field Fp
+        #p needs to be large prime number
+        x1,y1 = P1
+        x2,y2 = P2
+        x3 = (x1*y2+y1*x2)/(Fp.add( 1, Fp.mul( d, (x1*x2*y1*y2))))
+        y3 = (y1*y2-x1*x2)/(Fp.sub( 1, Fp.mul( d, (x1*x2*y1*y2))))
+        return x3,y3
     def edwards_scalar_multiply ( n, P ) :
         #x^2 + y^2 = 1 + d * x^2 * y^2
         if n == 0 : return ( Fp( 0 ), Fp( 1 ) )
@@ -78,6 +78,24 @@ class Fp :
         Q = Fp.edwardsadd( Q, Q )
         if n % 2 : Q = Fp.edwardsadd( P, Q )
         return Q
+    #taken directly from slides
+    #Montgomery with "Montgomery Ladder"
+    # A safe example:
+    #Choose p = 2**255 - 19
+    #Choose d = 121665=121666;`
+    def scalarmult(n,x1):
+        x2,z2,x3,z3 = 1,0,x1,1
+        for i in reversed(range(maxnbits)):
+            bit = 1 & (n >> i)
+            x2,x3 = cswap(x2,x3,bit)
+            z2,z3 = cswap(z2,z3,bit)
+            x3,z3 = ((x2*x3-z2*z3)^2,
+            x1*(x2*z3-z2*x3)^2)
+            x2,z2 = ((x2^2-z2^2)^2,
+            4*x2*z2*(x2^2+A*x2*z2+z2^2))
+            x2,x3 = cswap(x2,x3,bit)
+            z2,z3 = cswap(z2,z3,bit)
+        return x2*z2**(p-2)   
     def cswap( x, y, bit ) :
         if bit == 1 :
             temp = x
